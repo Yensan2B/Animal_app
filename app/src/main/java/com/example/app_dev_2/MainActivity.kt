@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.app_dev_2
 
 import android.content.res.Configuration
@@ -12,22 +14,36 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,16 +74,159 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+@Composable
+fun WellnessScreen(modifier: Modifier = Modifier) {
+    WaterCounter(modifier)
+}
+
+
+@Composable
+fun WaterCounter(modifier: Modifier = Modifier) {
+    Column(modifier = modifier.padding(16.dp)) {
+        var count by rememberSaveable { mutableStateOf(0) }
+        if (count > 0) {
+            var showTask by remember { mutableStateOf(true) }
+            if (showTask) {
+                WellnessTaskItem(
+                    onClose = { showTask = false },
+                    taskName = "Have you taken your 15 minute walk today?"
+                )
+            }
+            Text("You've had $count glasses.")
+        }
+
+        Row(Modifier.padding(top = 8.dp)) {
+            Button(onClick = { count++ }, enabled = count < 10) {
+                Text("Add one")
+            }
+            Button(
+                onClick = { count = 0 },
+                Modifier.padding(start = 8.dp)) {
+                Text("Clear water count")
+            }
+        }
+    }
+}
+
+
+@Composable
+fun WellnessTaskItem(
+    taskName: String,
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier, verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.weight(1f).padding(start = 16.dp),
+            text = taskName
+        )
+        IconButton(onClick = onClose) {
+            Icon(Icons.Filled.Close, contentDescription = "Close")
+        }
+    }
+}
+
+
+@Composable
+fun SearchBar(
+    modifier: Modifier = Modifier
+) {
+    var searchText by remember { mutableStateOf("") }
+
+    TextField(
+        value = searchText,
+        onValueChange = { newText ->
+            searchText = newText // Update the outer search text variable when the user types
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null
+            )
+        },
+        placeholder = {
+            Text(stringResource(R.string.placeholder_search))
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 56.dp)
+    )
+}
+
+
+@Composable
+private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        modifier = modifier
+    ) {
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Spa,
+                    contentDescription = null
+                )
+            },
+            label = {
+                Text(stringResource(R.string.bottom_navigation_home))
+            },
+            selected = true,
+            onClick = {}
+        )
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = null
+                )
+            },
+            label = {
+                Text(stringResource(R.string.bottom_navigation_profile))
+            },
+            selected = false,
+            onClick = {}
+        )
+    }
+}
+
 @Composable
 fun MyApp(modifier: Modifier = Modifier) {
     var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }
 
-    Surface(modifier, color = MaterialTheme.colorScheme.background) {
-        if (shouldShowOnboarding) {
-            OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
-        } else {
-            Greetings()
-        }
+    if (shouldShowOnboarding) {
+        OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
+    } else {
+        Scaffold(
+            topBar = {
+                // Define your top app bar here, if needed.
+                // Example: TopAppBar(title = { Text(text = "My App") })
+            },
+            bottomBar = {
+                // Define your bottom navigation bar here.
+                SootheBottomNavigation()
+            },
+            content = { paddingValues ->
+                Surface(
+                    modifier = modifier,
+                    color = MaterialTheme.colorScheme.background
+                ) {
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                    ) {
+                        SearchBar(Modifier.padding(horizontal = 16.dp))
+                        Greetings()
+                        WellnessScreen()
+
+                    }
+                }
+            }
+        )
     }
 }
 
@@ -120,6 +279,7 @@ private fun Greeting(name: String) {
 @Composable
 private fun CardContent(name: String) {
     var expanded by rememberSaveable { mutableStateOf(false) }
+    var checked by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -159,6 +319,14 @@ private fun CardContent(name: String) {
                 }
             )
         }
+
+        Checkbox(
+            checked = checked,
+            onCheckedChange = { newChecked ->
+                checked = newChecked // Update the checked state when the user interacts with the checkbox
+            }
+        )
+
     }
 }
 
