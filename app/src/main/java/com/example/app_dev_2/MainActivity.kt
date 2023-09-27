@@ -30,6 +30,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -85,19 +86,16 @@ fun WellnessScreen(modifier: Modifier = Modifier) {
 fun WaterCounter(modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(16.dp)) {
         var count by rememberSaveable { mutableStateOf(0) }
-        if (count > 0) {
-            var showTask by remember { mutableStateOf(true) }
-            if (showTask) {
-                WellnessTaskItem(
-                    onClose = { showTask = false },
-                    taskName = "Have you taken your 15 minute walk today?"
-                )
-            }
-            Text("You've had $count glasses.")
+        var maxOwnAnimal = 5
+        if (count == maxOwnAnimal) {
+            Text("You've can't own more than $maxOwnAnimal")
         }
 
+        Text("You've had $count glasses.")
+
+
         Row(Modifier.padding(top = 8.dp)) {
-            Button(onClick = { count++ }, enabled = count < 10) {
+            Button(onClick = { count++ }, enabled = count < maxOwnAnimal) {
                 Text("Add one")
             }
             Button(
@@ -105,26 +103,6 @@ fun WaterCounter(modifier: Modifier = Modifier) {
                 Modifier.padding(start = 8.dp)) {
                 Text("Clear water count")
             }
-        }
-    }
-}
-
-
-@Composable
-fun WellnessTaskItem(
-    taskName: String,
-    onClose: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier, verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            modifier = Modifier.weight(1f).padding(start = 16.dp),
-            text = taskName
-        )
-        IconButton(onClick = onClose) {
-            Icon(Icons.Filled.Close, contentDescription = "Close")
         }
     }
 }
@@ -309,6 +287,12 @@ private fun CardContent(name: String) {
                 )
             }
         }
+        Checkbox(
+            checked = checked,
+            onCheckedChange = { newChecked ->
+                checked = newChecked // Update the checked state when the user interacts with the checkbox
+            }
+        )
         IconButton(onClick = { expanded = !expanded }) {
             Icon(
                 imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
@@ -319,14 +303,6 @@ private fun CardContent(name: String) {
                 }
             )
         }
-
-        Checkbox(
-            checked = checked,
-            onCheckedChange = { newChecked ->
-                checked = newChecked // Update the checked state when the user interacts with the checkbox
-            }
-        )
-
     }
 }
 
