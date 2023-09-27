@@ -35,6 +35,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -43,7 +44,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,8 +55,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.app_dev_2.ui.theme.App_Dev_2Theme
@@ -173,6 +178,7 @@ private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
 @Composable
 fun MyApp(modifier: Modifier = Modifier) {
     var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }
+    val BeigeColor = Color(0xFFFFF3DA)
 
     if (shouldShowOnboarding) {
         OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
@@ -180,7 +186,9 @@ fun MyApp(modifier: Modifier = Modifier) {
         Scaffold(
             topBar = {
                 // Define your top app bar here, if needed.
-                // Example: TopAppBar(title = { Text(text = "My App") })
+                 TopAppBar(title = { Text(text = "My App",
+                     textAlign = TextAlign.Center, // Center align the text
+                     modifier = Modifier.fillMaxWidth()) })
             },
             bottomBar = {
                 // Define your bottom navigation bar here.
@@ -189,7 +197,7 @@ fun MyApp(modifier: Modifier = Modifier) {
             content = { paddingValues ->
                 Surface(
                     modifier = modifier,
-                    color = MaterialTheme.colorScheme.background
+                    color = BeigeColor
                 ) {
 
                     Column(
@@ -197,7 +205,7 @@ fun MyApp(modifier: Modifier = Modifier) {
                             .fillMaxSize()
                             .padding(paddingValues)
                     ) {
-                        SearchBar(Modifier.padding(horizontal = 16.dp))
+                        //SearchBar(Modifier.padding(horizontal = 16.dp))
                         Greetings()
                         WellnessScreen()
 
@@ -244,9 +252,10 @@ private fun Greetings(
 
 @Composable
 private fun Greeting(name: String) {
+    val BrownColor = Color(0xFF5A3813)
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = BrownColor
         ),
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
@@ -259,6 +268,8 @@ private fun CardContent(name: String) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var checked by remember { mutableStateOf(false) }
 
+    //Make text color with that card white
+    CompositionLocalProvider(LocalContentColor provides Color.White) {
     Row(
         modifier = Modifier
             .padding(12.dp)
@@ -287,12 +298,6 @@ private fun CardContent(name: String) {
                 )
             }
         }
-        Checkbox(
-            checked = checked,
-            onCheckedChange = { newChecked ->
-                checked = newChecked // Update the checked state when the user interacts with the checkbox
-            }
-        )
         IconButton(onClick = { expanded = !expanded }) {
             Icon(
                 imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
@@ -302,6 +307,7 @@ private fun CardContent(name: String) {
                     stringResource(R.string.show_more)
                 }
             )
+        }
         }
     }
 }
