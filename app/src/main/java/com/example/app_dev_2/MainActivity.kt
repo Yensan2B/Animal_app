@@ -243,6 +243,7 @@ fun OnboardingScreen(
 @Composable
 private fun Greetings(
     modifier: Modifier = Modifier,
+
 ) {
     val animals = AnimalData()
     LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {

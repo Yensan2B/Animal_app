@@ -8,10 +8,10 @@ data class Animal(val name: String, val image: Painter, val description: String)
 
 @Composable
 fun AnimalData(): List<Animal> {
-    val animals: List<Animal> = listOf(
+    return listOf(
         Animal("Alice", painterResource(id = R.drawable.horse), "ye"),
         Animal("Bob", painterResource(id = R.drawable.horse), "yo"),
-        Animal("Charlie", painterResource(id = R.drawable.horse), "ya")
+        Animal("Charlie", painterResource(id = R.drawable.horse), "ya"),
+
     )
-    return animals
 }
