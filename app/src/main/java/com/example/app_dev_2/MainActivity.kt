@@ -239,15 +239,12 @@ fun OnboardingScreen(
     }
 }
 
-data class Animal(val name: String, val image: Painter)
+//data class Animal(val name: String, val image: Painter, val description: String)
 @Composable
 private fun Greetings(
     modifier: Modifier = Modifier,
-    animals: List<Animal> = listOf(Animal("Alice", painterResource(R.drawable.horse)),
-        Animal("Bob", painterResource(R.drawable.horse)),
-        Animal("Charlie", painterResource(R.drawable.horse)))
-
 ) {
+    val animals = AnimalData()
     LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
         items(items = animals) { animal ->
             Greeting(animal = animal)
@@ -310,8 +307,7 @@ private fun CardContent(animal: Animal) {
             }
             if (expanded) {
                 Text(
-                    text = ("Composem ipsum color sit lazy, " +
-                            "padding theme elit, sed do bouncy. ").repeat(4),
+                    text = animal.description
                 )
             }
         }
