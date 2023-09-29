@@ -4,6 +4,7 @@ package com.example.app_dev_2
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.widget.RadioGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.animateContentSize
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -40,6 +42,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -87,6 +90,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun WellnessScreen(modifier: Modifier = Modifier) {
     WaterCounter(modifier)
+    RadioButtonSample()
 }
 
 
@@ -111,9 +115,52 @@ fun WaterCounter(modifier: Modifier = Modifier) {
                 Modifier.padding(start = 8.dp)) {
                 Text("Clear water count")
             }
+
+            RadioButton(selected = true, onClick = { /*TODO*/ })
+            RadioButton(selected = false, onClick = { /*TODO*/ })
         }
     }
 }
+
+@Composable
+fun RadioButtonSample() {
+    val radioOptions = AnimalData()
+    val animals = AnimalData()
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[1] ) }
+
+
+        Text(selectedOption.name)
+
+
+    Column {
+        radioOptions.forEach { text ->
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = (text.name == selectedOption.name),
+                        onClick = {
+                            onOptionSelected(text)
+                        }
+                    )
+                    .padding(horizontal = 16.dp)
+
+            ) {
+                RadioButton(
+                    selected = (text.name == selectedOption.name),
+                    onClick = { onOptionSelected(text) }
+                )
+                Text(
+                    text = text.name
+                )
+            }
+        }
+    }
+}
+
+
+
+
 
 
 @Composable
@@ -209,7 +256,7 @@ fun MyApp(modifier: Modifier = Modifier) {
                             .padding(paddingValues)
                     ) {
                         //SearchBar(Modifier.padding(horizontal = 16.dp))
-                        Greetings()
+                        //Greetings()
                         WellnessScreen()
 
                     }
@@ -243,7 +290,6 @@ fun OnboardingScreen(
 @Composable
 private fun Greetings(
     modifier: Modifier = Modifier,
-
 ) {
     val animals = AnimalData()
     LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
@@ -293,7 +339,9 @@ private fun CardContent(animal: Animal) {
 
                 Image(painter = animal.image,
                     contentDescription = "animal ye",
-                    modifier = Modifier.size(100.dp).clip(RoundedCornerShape(50.dp)),
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(RoundedCornerShape(50.dp)),
                     contentScale = ContentScale.Crop)
 
                 Spacer(modifier = Modifier.width(15.dp))
