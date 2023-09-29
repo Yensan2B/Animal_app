@@ -115,9 +115,6 @@ fun WaterCounter(modifier: Modifier = Modifier) {
                 Modifier.padding(start = 8.dp)) {
                 Text("Clear water count")
             }
-
-            RadioButton(selected = true, onClick = { /*TODO*/ })
-            RadioButton(selected = false, onClick = { /*TODO*/ })
         }
     }
 }
@@ -150,6 +147,42 @@ fun RadioButtonSample() {
                     selected = (text.name == selectedOption.name),
                     onClick = { onOptionSelected(text) }
                 )
+                Text(
+                    text = text.name
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun buttonTest() {
+    val radioOptions = AnimalData()
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[1] ) }
+    var count by rememberSaveable { mutableStateOf(0) }
+
+    Text(selectedOption.name)
+
+
+    Column {
+        radioOptions.forEach { text ->
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = (text.name == selectedOption.name),
+                        onClick = {
+                            onOptionSelected(text)
+                        }
+                    )
+                    .padding(horizontal = 16.dp)
+
+            ) {
+                Button(onClick = { onOptionSelected(text)}) {
+                    Text(text.name)
+                    text.name == selectedOption.name
+                }
                 Text(
                     text = text.name
                 )
@@ -258,6 +291,7 @@ fun MyApp(modifier: Modifier = Modifier) {
                         //SearchBar(Modifier.padding(horizontal = 16.dp))
                         //Greetings()
                         WellnessScreen()
+                        buttonTest()
 
                     }
                 }
