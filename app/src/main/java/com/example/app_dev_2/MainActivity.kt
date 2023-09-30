@@ -71,18 +71,20 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.app_dev_2.ui.theme.App_Dev_2Theme
+import com.example.app_dev_2.ui.theme.Typography
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             App_Dev_2Theme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -105,22 +107,34 @@ fun WellnessScreen(modifier: Modifier = Modifier) {
 fun WaterCounter(modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(16.dp)) {
         var count by rememberSaveable { mutableStateOf(0) }
+        var listCount by rememberSaveable { mutableStateOf(listOf<Int>()) }
         var maxOwnAnimal = 5
+        var maxOwnDonation = 10
         if (count == maxOwnAnimal) {
             Text("You've can't own more than $maxOwnAnimal")
         }
 
         Text("You've had $count glasses.")
 
+        Text("${listCount.size}")
+        Row {
+            listCount.forEach() { text ->
+                Text(text.toString())
+            }
+        }
+
 
         Row(Modifier.padding(top = 8.dp)) {
-            Button(onClick = { count++ }, enabled = count < maxOwnAnimal) {
+            Button(onClick = { count++ }, enabled = count < maxOwnAnimal && listCount.size < maxOwnDonation) {
                 Text("Add one")
             }
             Button(
                 onClick = { count = 0 },
                 Modifier.padding(start = 8.dp)) {
                 Text("Clear water count")
+            }
+            Button(onClick = { listCount += count}, enabled = count < maxOwnAnimal && listCount.size < maxOwnDonation) {
+                Text("Donate")
             }
         }
     }
@@ -276,32 +290,27 @@ private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
 
 @Composable
 fun MyApp(modifier: Modifier = Modifier) {
-    var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }
-    val BeigeColor = Color(0xFFFFF3DA)
+    var showTitleScreen by rememberSaveable { mutableStateOf(true) }
 
-    if (shouldShowOnboarding) {
-        OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
-    } else {
+    if (showTitleScreen)
+    {
+        TitleScreen(onContinueClicked = { showTitleScreen = false })
+    }
+    else {
         Scaffold(
             topBar = {
-                // Define your top app bar here, if needed.
-                 TopAppBar(title = { Text(text = "My App",
-                     textAlign = TextAlign.Center, // Center align the text
-                     modifier = Modifier.fillMaxWidth()) },
-                     colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.background)
-
+                 TopAppBar(
+                     title = { Text(text = "My App",
+                     textAlign = TextAlign.Center, color = Color.White,
+                     modifier = Modifier.fillMaxWidth())},
+                     colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.primary)
                  )
-            },
-            bottomBar = {
-                // Define your bottom navigation bar here.
-                //SootheBottomNavigation()
             },
             content = { paddingValues ->
                 Surface(
                     modifier = modifier,
                     color = MaterialTheme.colorScheme.background
                 ) {
-
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -309,11 +318,9 @@ fun MyApp(modifier: Modifier = Modifier) {
                             .verticalScroll(rememberScrollState())
 
                     ) {
-                        //SearchBar(Modifier.padding(horizontal = 16.dp))
-                        Greetings()
-                        //WellnessScreen()
+                        AnimalInfo()
+                        WaterCounter()
                         buttonTest()
-
                     }
                 }
             }
@@ -322,44 +329,45 @@ fun MyApp(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun OnboardingScreen(
+fun TitleScreen(
     onContinueClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().padding(50.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Welcome to the Basics Codelab!")
+        Text("Animal Zoo Wiko\n", style = Typography.titleLarge)
+        Text("Welcome! here you will be able to learn more about our animals and be " +
+                "able to do an act of charity to these animals",
+            style = Typography.bodyLarge, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
         Button(
             modifier = Modifier.padding(vertical = 24.dp),
             onClick = onContinueClicked
         ) {
-            Text("Continue")
+            Text("Let's go!")
         }
     }
 }
 
-//data class Animal(val name: String, val image: Painter, val description: String)
 @Composable
-private fun Greetings(
+private fun AnimalInfo(
     modifier: Modifier = Modifier,
 ) {
     val animals = AnimalData()
     Column(modifier = modifier.padding(vertical = 4.dp)) {
         animals.forEach(){ animal ->
-            Greeting(animal = animal)
+            AnimalInfo(animal = animal)
         }
     }
 }
 
 @Composable
-private fun Greeting(animal: Animal) {
-    val BrownColor = Color(0xFF5A3813)
+private fun AnimalInfo(animal: Animal) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = BrownColor
+            containerColor = MaterialTheme.colorScheme.secondary
         ),
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
