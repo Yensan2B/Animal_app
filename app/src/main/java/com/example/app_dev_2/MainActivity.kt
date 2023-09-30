@@ -11,12 +11,14 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -24,8 +26,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ExpandLess
@@ -48,6 +52,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -59,6 +64,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Blue
+import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -90,7 +98,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun WellnessScreen(modifier: Modifier = Modifier) {
     WaterCounter(modifier)
-    RadioButtonSample()
 }
 
 
@@ -159,35 +166,44 @@ fun RadioButtonSample() {
 @Composable
 fun buttonTest() {
     val radioOptions = AnimalData()
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[1] ) }
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     var count by rememberSaveable { mutableStateOf(0) }
 
-    Text(selectedOption.name)
-
-
-    Column {
-        radioOptions.forEach { text ->
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = (text.name == selectedOption.name),
-                        onClick = {
-                            onOptionSelected(text)
-                        }
-                    )
-                    .padding(horizontal = 16.dp)
-
-            ) {
-                Button(onClick = { onOptionSelected(text)}) {
-                    Text(text.name)
-                    text.name == selectedOption.name
+    Text( "Select to see these horse favorite fruit")
+    Row {
+        Column {
+            radioOptions.forEach { text ->
+                Row(Modifier.padding(top = 10.dp)){
+                    Button(onClick = { onOptionSelected(text) }) {
+                        Image(
+                            painter = text.image,
+                            contentDescription = "animal ye",
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clip(RoundedCornerShape(50.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                        Text(text = text.name)
+                    }
                 }
-                Text(
-                    text = text.name
-                )
+
             }
         }
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text( "${selectedOption.name} favorite food is:")
+            Image(painter = selectedOption.image, contentDescription = "A"
+            ,modifier = Modifier
+                    .height(150.dp)
+                    )
+        }
+
+
+
+
     }
 }
 
@@ -271,26 +287,31 @@ fun MyApp(modifier: Modifier = Modifier) {
                 // Define your top app bar here, if needed.
                  TopAppBar(title = { Text(text = "My App",
                      textAlign = TextAlign.Center, // Center align the text
-                     modifier = Modifier.fillMaxWidth()) })
+                     modifier = Modifier.fillMaxWidth()) },
+                     colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.background)
+
+                 )
             },
             bottomBar = {
                 // Define your bottom navigation bar here.
-                SootheBottomNavigation()
+                //SootheBottomNavigation()
             },
             content = { paddingValues ->
                 Surface(
                     modifier = modifier,
-                    color = BeigeColor
+                    color = MaterialTheme.colorScheme.background
                 ) {
 
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues)
+                            .verticalScroll(rememberScrollState())
+
                     ) {
                         //SearchBar(Modifier.padding(horizontal = 16.dp))
-                        //Greetings()
-                        WellnessScreen()
+                        Greetings()
+                        //WellnessScreen()
                         buttonTest()
 
                     }
@@ -326,8 +347,8 @@ private fun Greetings(
     modifier: Modifier = Modifier,
 ) {
     val animals = AnimalData()
-    LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
-        items(items = animals) { animal ->
+    Column(modifier = modifier.padding(vertical = 4.dp)) {
+        animals.forEach(){ animal ->
             Greeting(animal = animal)
         }
     }
