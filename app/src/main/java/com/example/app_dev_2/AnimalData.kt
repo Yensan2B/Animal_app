@@ -4,14 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 
-data class Animal(val name: String, val image: Painter, val description: String)
+data class Animal(val name: String, val image: Painter, val description: String, val food: Painter)
 
 @Composable
 fun AnimalData(): List<Animal> {
     return listOf(
-        Animal("Alice", painterResource(id = R.drawable.horse), "ye"),
-        Animal("Bob", painterResource(id = R.drawable.horse), "yo"),
-        Animal("Charlie", painterResource(id = R.drawable.horse), "ya"),
+        Animal("Horse", painterResource(id = R.drawable.horse), "ye", painterResource(id = R.drawable.carrots)),
+        Animal("Seal", painterResource(id = R.drawable.seal), "yo", painterResource(id = R.drawable.flatfish)),
+        Animal("Panda", painterResource(id = R.drawable.panda), "ya", painterResource(id = R.drawable.bamboo)),
 
     )
 }
