@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -80,6 +81,9 @@ import com.example.app_dev_2.ui.theme.App_Dev_2Theme
 import com.example.app_dev_2.ui.theme.Typography
 import kotlinx.coroutines.flow.MutableStateFlow
 
+/**
+ * Main activity for the app.
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,198 +100,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
-@Composable
-fun WellnessScreen(modifier: Modifier = Modifier) {
-    WaterCounter(modifier)
-}
-
-
-@Composable
-fun WaterCounter(modifier: Modifier = Modifier) {
-    Column(modifier = modifier.padding(16.dp)) {
-        var count by rememberSaveable { mutableStateOf(0) }
-        var listCount by rememberSaveable { mutableStateOf(listOf<Int>()) }
-        var maxOwnAnimal = 5
-        var maxOwnDonation = 10
-        if (count == maxOwnAnimal) {
-            Text("You've can't own more than $maxOwnAnimal")
-        }
-
-        Text("You've had $count glasses.")
-
-        Text("${listCount.size}")
-        Row {
-            listCount.forEach() { text ->
-                Text(text.toString())
-            }
-        }
-
-
-        Row(Modifier.padding(top = 8.dp)) {
-            Button(onClick = { count++ }, enabled = count < maxOwnAnimal && listCount.size < maxOwnDonation) {
-                Text("Add one")
-            }
-            Button(
-                onClick = { count = 0 },
-                Modifier.padding(start = 8.dp)) {
-                Text("Clear water count")
-            }
-            Button(onClick = { listCount += count}, enabled = count < maxOwnAnimal && listCount.size < maxOwnDonation) {
-                Text("Donate")
-            }
-        }
-    }
-}
-
-@Composable
-fun RadioButtonSample() {
-    val radioOptions = AnimalData()
-    val animals = AnimalData()
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[1] ) }
-
-
-        Text(selectedOption.name)
-
-
-    Column {
-        radioOptions.forEach { text ->
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = (text.name == selectedOption.name),
-                        onClick = {
-                            onOptionSelected(text)
-                        }
-                    )
-                    .padding(horizontal = 16.dp)
-
-            ) {
-                RadioButton(
-                    selected = (text.name == selectedOption.name),
-                    onClick = { onOptionSelected(text) }
-                )
-                Text(
-                    text = text.name
-                )
-            }
-        }
-    }
-}
-
-
-@Composable
-fun buttonTest() {
-    val radioOptions = AnimalData()
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-    var count by rememberSaveable { mutableStateOf(0) }
-
-    Text( "Select to see these horse favorite fruit")
-    Row {
-        Column {
-            radioOptions.forEach { text ->
-                Row(Modifier.padding(top = 10.dp)){
-                    Button(onClick = { onOptionSelected(text) }) {
-                        Image(
-                            painter = text.image,
-                            contentDescription = "animal ye",
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clip(RoundedCornerShape(50.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                        Text(text = text.name)
-                    }
-                }
-
-            }
-        }
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text( "${selectedOption.name} favorite food is:")
-            Image(painter = selectedOption.image, contentDescription = "A"
-            ,modifier = Modifier
-                    .height(150.dp)
-                    )
-        }
-
-
-
-
-    }
-}
-
-
-
-
-
-
-@Composable
-fun SearchBar(
-    modifier: Modifier = Modifier
-) {
-    var searchText by remember { mutableStateOf("") }
-
-    TextField(
-        value = searchText,
-        onValueChange = { newText ->
-            searchText = newText // Update the outer search text variable when the user types
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = null
-            )
-        },
-        placeholder = {
-            Text(stringResource(R.string.placeholder_search))
-        },
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = 56.dp)
-    )
-}
-
-
-@Composable
-private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        modifier = modifier
-    ) {
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Spa,
-                    contentDescription = null
-                )
-            },
-            label = {
-                Text(stringResource(R.string.bottom_navigation_home))
-            },
-            selected = true,
-            onClick = {}
-        )
-        NavigationBarItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = null
-                )
-            },
-            label = {
-                Text(stringResource(R.string.bottom_navigation_profile))
-            },
-            selected = false,
-            onClick = {}
-        )
-    }
-}
-
+/**
+ * The main composable the run the app
+ */
 @Composable
 fun MyApp(modifier: Modifier = Modifier) {
     var showTitleScreen by rememberSaveable { mutableStateOf(true) }
@@ -319,8 +134,8 @@ fun MyApp(modifier: Modifier = Modifier) {
 
                     ) {
                         AnimalInfo()
-                        WaterCounter()
-                        buttonTest()
+                        AnimalFoodInfo()
+                        DonationSection()
                     }
                 }
             }
@@ -328,13 +143,18 @@ fun MyApp(modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * Composable for title screen
+ */
 @Composable
 fun TitleScreen(
     onContinueClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize().padding(50.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(50.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -344,25 +164,32 @@ fun TitleScreen(
             style = Typography.bodyLarge, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
         Button(
             modifier = Modifier.padding(vertical = 24.dp),
-            onClick = onContinueClicked
+            onClick = onContinueClicked,
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
         ) {
             Text("Let's go!")
         }
     }
 }
 
+/**
+ * Composable for displaying a list of animal's information.
+ */
 @Composable
 private fun AnimalInfo(
     modifier: Modifier = Modifier,
 ) {
-    val animals = AnimalData()
+    val animalsList = AnimalData()
     Column(modifier = modifier.padding(vertical = 4.dp)) {
-        animals.forEach(){ animal ->
+        animalsList.forEach(){ animal ->
             AnimalInfo(animal = animal)
         }
     }
 }
 
+/**
+ * Composable that display an animal's information.
+ */
 @Composable
 private fun AnimalInfo(animal: Animal) {
     Card(
@@ -371,14 +198,16 @@ private fun AnimalInfo(animal: Animal) {
         ),
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
-        CardContent(animal)
+        AnimalCard(animal)
     }
 }
 
+/**
+ * Composable card tha display animal's image, type and description
+ */
 @Composable
-private fun CardContent(animal: Animal) {
+private fun AnimalCard(animal: Animal) {
     var expanded by rememberSaveable { mutableStateOf(false) }
-    var checked by remember { mutableStateOf(false) }
 
     //Make text color with that card white
     CompositionLocalProvider(LocalContentColor provides Color.White) {
@@ -417,26 +246,152 @@ private fun CardContent(animal: Animal) {
                         .offset(y = 25.dp)
                 )
             }
-            if (expanded) {
-                Text(
-                    text = animal.description
-                )
-            }
+            if (expanded) {  Text( text = animal.description ) }
         }
         IconButton(onClick = { expanded = !expanded }) {
-            Icon(
-                imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                contentDescription = if (expanded) {
-                    stringResource(R.string.show_less)
-                } else {
-                    stringResource(R.string.show_more)
-                }
-            )
-        }
+                Icon(
+                    imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                    contentDescription = if (expanded) {
+                        stringResource(R.string.show_less)
+                    }
+                    else { stringResource(R.string.show_more) }
+                )
+            }
         }
     }
 }
 
+/**
+ * Composable that allows the user to see by a button, which is the animal favorite food throught an image
+ */
+@Composable
+fun AnimalFoodInfo(modifier: Modifier = Modifier,) {
+    val animalList = AnimalData()
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(animalList[0]) }
+
+    Column(modifier = modifier
+        .fillMaxSize()
+        .padding(10.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally){
+        Text( "Select to see these horse favorite fruit", style = Typography.titleMedium)
+    }
+
+    Row {
+        Column {
+            animalList.forEach { text ->
+                Row(Modifier.padding(7.dp)){
+                    Button(onClick = { onOptionSelected(text) },
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)) {
+                        Image(
+                            painter = text.image,
+                            contentDescription = "Animal Icon",
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clip(RoundedCornerShape(50.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                        Spacer(modifier = Modifier.width(15.dp))
+                        Text(text = text.name)
+                    }
+                }
+            }
+        }
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text( "${selectedOption.name} favorite food is:", style = Typography.titleMedium)
+            Image(painter = selectedOption.food,
+                contentDescription = "Animal favorite food",
+                modifier = Modifier.height(150.dp)
+            )
+        }
+    }
+}
+
+/**
+ * Composable that allows the user to donate by a click of a button
+ */
+@Composable
+fun DonationSection(modifier: Modifier = Modifier) {
+    Column(modifier = modifier.padding(20.dp)) {
+        var click by rememberSaveable { mutableStateOf(0) }
+        var listCount by rememberSaveable { mutableStateOf(listOf<Int>()) }
+        var maxClick = 20
+        var maxDonation = 5
+
+        Text("Donate for animal (not shady)!, each click is worth .05 cent," +
+                " but you can only donate 5 time with 20 click max so make the most out of it!",
+            style = Typography.titleMedium)
+
+        Row(modifier.padding(top = 15.dp)) {
+            Column {
+                Row {
+                    Button(
+                        onClick = { click++ },
+                        enabled = click < maxClick && listCount.size < maxDonation,
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
+                    ) {
+                        Text("Add 0.5 cent")
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Button(
+                        onClick = { listCount += click
+                            click = 0},
+                        enabled = listCount.size < maxDonation,
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
+                    ) {
+                        Text("Donate!")
+                    }
+                }
+
+                Row {
+                    Spacer(modifier = Modifier.width(30.dp))
+                    if (listCount.size >= maxDonation) {
+                        Image(
+                            painter = painterResource(id = R.drawable.animal_thankyou),
+                            contentDescription = "animal ye",
+                            modifier = Modifier
+                                .size(150.dp)
+                                .padding(top = 20.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.donations),
+                            contentDescription = "animal ye",
+                            modifier = Modifier
+                                .size(150.dp)
+                                .padding(top = 20.dp),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.width(10.dp))
+            Column {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(" You Click: $click", fontWeight = FontWeight.Bold)
+
+                Spacer(modifier = Modifier.height(22.dp))
+                Column {
+                    Text("History:", fontWeight = FontWeight.Bold)
+                    listCount.forEach() { text ->
+                        Spacer(modifier = Modifier.height(3.dp))
+                        Text("clicked: ${text.toString()}")
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Preview for UI testing
+ */
 @Preview(
     showBackground = true,
     widthDp = 320,
@@ -445,7 +400,7 @@ private fun CardContent(animal: Animal) {
 )
 @Preview(showBackground = true, widthDp = 320)
 @Composable
-fun GreetingPreview() {
+fun AppPreview() {
     App_Dev_2Theme {
         MyApp()
     }
