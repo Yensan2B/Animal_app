@@ -134,7 +134,6 @@ fun MyApp(modifier: Modifier = Modifier) {
 
                     ) {
                         AnimalInfo()
-                        AnimalFoodInfo()
                         DonationSection()
                     }
                 }
@@ -257,56 +256,6 @@ private fun AnimalCard(animal: Animal) {
                     else { stringResource(R.string.show_more) }
                 )
             }
-        }
-    }
-}
-
-/**
- * Composable that allows the user to see by a button, which is the animal favorite food throught an image
- */
-@Composable
-fun AnimalFoodInfo(modifier: Modifier = Modifier,) {
-    val animalList = AnimalData()
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(animalList[0]) }
-
-    Column(modifier = modifier
-        .fillMaxSize()
-        .padding(10.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally){
-        Text( "Select to see these horse favorite fruit", style = Typography.titleMedium)
-    }
-
-    Row {
-        Column {
-            animalList.forEach { text ->
-                Row(Modifier.padding(7.dp)){
-                    Button(onClick = { onOptionSelected(text) },
-                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)) {
-                        Image(
-                            painter = text.image,
-                            contentDescription = "Animal Icon",
-                            modifier = Modifier
-                                .size(20.dp)
-                                .clip(RoundedCornerShape(50.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                        Spacer(modifier = Modifier.width(15.dp))
-                        Text(text = text.name)
-                    }
-                }
-            }
-        }
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text( "${selectedOption.name} favorite food is:", style = Typography.titleMedium)
-            Image(painter = selectedOption.food,
-                contentDescription = "Animal favorite food",
-                modifier = Modifier.height(150.dp)
-            )
         }
     }
 }
