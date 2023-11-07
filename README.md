@@ -4,8 +4,6 @@
 
 Welcome to Animal App, a small and educational application designed to serve as a wiki for learning about various animals. This app is a project created to help you become familiar with Kotlin, a modern and versatile programming language. Not only can you explore interesting facts about different animals, but you also have the opportunity to contribute by making a donation based on the number of clicks.
 
-![Animal App](image-link-here)
-
 ## Features
 
 ### 1. Explore Animal Information
@@ -20,7 +18,7 @@ Use Animal App as a learning resource to discover fascinating details about the 
 
 Animal App encourages user participation by offering a donation section. This feature allows you to contribute to the app's development and maintenance based on the number of clicks. Your support helps ensure that Animal App continues to provide a rich source of animal knowledge.
 
-![Donation Section](image-link-here)
+![Donation Section](./img/demo/donate.png)
 
 ## Getting Started
 
