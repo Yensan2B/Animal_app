@@ -2,7 +2,8 @@
 
 ## Introduction
 
-Welcome to Animal App, a small and educational application designed to serve as a wiki for learning about various animals. This app is a project created to help you become familiar with Kotlin, a modern and versatile programming language. Not only can you explore interesting facts about different animals, but you also have the opportunity to contribute by making a donation based on the number of clicks.
+The Animal App is a small and educational application designed to serve as a wiki that I created to familiarize myself with Kotlin. 
+This application will serve as the foundation for a larger project that I am currently working on.
 
 ## Features
 
